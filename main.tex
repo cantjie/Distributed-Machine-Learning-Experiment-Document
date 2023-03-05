@@ -1,0 +1,106 @@
+\documentclass[12pt]{report}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{xeCJK}
+% \usepackage{ctex}
+% \usepackage[sort]{natbib}
+% \bibliographystyle{sb}
+%     \bibpunct[:]{(}{)}{;}{a}{}{,}
+\usepackage[colorlinks=false,hidelinks]{hyperref}  %change to true if you want to see links in color for drafting; hidelinks removes the boxes around links
+
+\usepackage{doi} % turns dois into links
+
+\usepackage{gb4e}\noautomath %% or use expex, as preferred
+
+\input{localpackages.tex}
+
+\begin{document}
+\input{titlepage.tex}
+
+\pagenumbering{roman}
+
+% \addtocontents{toc}{\vspace{0pt}\protect\noindent\parbox[t]{\textwidth}{\normalsize\textcolor{black}{\textbf{Front matter}}}\par}
+
+\clearpage
+\phantomsection\addcontentsline{toc}{section}{前言}
+\chapter*{前言}
+\addtocounter{page}{-1}
+
+这里说一些前言，当然空着也行。
+
+\stepcounter{page}
+
+
+\singlespacing
+\setstretch{0.95}
+\tableofcontents
+\addcontentsline{toc}{section}{目录}
+\setstretch{1}
+
+% \clearpage\chapter*{致谢}\addcontentsline{toc}{section}{致谢}
+
+
+
+
+\normalsize
+\newpage
+\pagenumbering{arabic}
+\doublespacing
+\setlength{\parindent}{1.5em}
+\input{env_setup.tex}
+
+
+
+% \chapter{Introduction}\label{introduction}
+
+% \citet{anderson1985phonology} is a book that should now show up in the references.
+
+% \begin{exe} \ex \label{staednacds} \begin{xlist}
+% % \ex[] {*I don’t [go e\textturnr].}
+% % \ex[] {I don’t [go ðe\textturnr]. }
+% \end{xlist}
+% \end{exe}
+
+
+% \begin{exe} 
+% \ex[] {Don't [it\textsuperscript{h}:\ae t].}
+% \end{exe}
+
+
+
+% \section {Discussion}
+
+% Here's another example, see \ref{ex:example} for the example.
+
+% \begin{exe}
+% \ex\label{ex:example} Here's an \textbf{example}.
+% \end{exe}
+
+% \subsection{A subsection}
+% Some text
+
+% \begin{figure}[ht] %puts a figure either here or the top of the next page.
+%     \centering
+% %    \includegraphics[width=0.6\linewidth]{deleter-r-stats.png}
+%     \caption{Caption}
+%     \label{fig:mylabel}
+% \end{figure}
+ 
+
+% \subsection{Another subsection}
+
+% \section{Conclusion}
+
+
+    
+
+\clearpage\singlespacing
+
+
+%\phantomsection
+
+% \bibliography{references/Bibliog}  %Name of your bibliography file, exported from Zotero.
+
+
+\end{document}
+

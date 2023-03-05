@@ -1,0 +1,175 @@
+%%% Keep these 
+\hypersetup{colorlinks=true,linkcolor=cyan,urlcolor=blue}
+\usepackage{xcolor}
+\usepackage{listings}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.97,0.97,0.97}
+
+%Code listing style named "python_style"
+\lstdefinestyle{python_style}{
+    backgroundcolor=\color{backcolour}, 
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\linespread{.7}\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=python
+}
+\lstset{style=python_style}
+\newcommand{\graylstinline}[1]{\colorbox{backcolour}{\lstinline{#1}}}
+
+% \lstdefinestyle{inline_style}{
+%     backgroundcolor=\color{backcolour}
+% }
+% \def\inline{\lstinline[basicstyle=inline_style]}
+
+%%% Unicode font specifications
+\usepackage[T1]{fontenc} % brings glyphs from 128 to 256, making accents easier
+%\usepackage{textcomp} % more text symbols
+\usepackage{fontspec,xltxtra,xunicode} % XeTeX font support stuff
+% \usepackage{pifont}
+\defaultfontfeatures{Mapping=tex-text}
+
+
+%% FONTS
+%\usepackage{libertine}
+%\usepackage{times}
+
+%\usepackage{comment} % permits a comment environment w/ varied versions
+
+\usepackage{graphicx}
+
+
+%%% Most of these are either optional or probably not needed for most people
+
+\usepackage{anyfontsize}
+%\usepackage{soul} % hyphenatable text formatting, basically
+%\usepackage{wrapfig} % wrap around figures
+% \usepackage{ragged2e}
+\usepackage{booktabs} % enhances tables
+\usepackage{colortbl}
+% \usepackage{newtxmath,newtxtext}
+% \usepackage{svg} % take this out if yale-crest isn't an svg
+% \usepackage{epsfig}
+\usepackage{titlesec} % more control over section and chapter headings
+
+
+\DeclareGraphicsExtensions{.pdf,.png} %means you don't have to type the extension when including graphics; comment out if you prefer not to have this
+
+
+
+% \setlength{\bibsep}{1.25pt} % sets bib spacing between items
+
+\usepackage[normalem]{ulem}
+%\usepackage{amssymb} % extra math symbols
+%\usepackage[nointegrals]{wasysym}
+% \usepackage{multirow} % multirow cells and tables
+% \usepackage{mathrsfs} % supports rsfs font in math
+%\usepackage{arydshln} % \hdashline and \cdashline
+%\usepackage{pifont}
+%\usepackage{stmaryrd} % compsci symbols, incl. \llbracket and \rrbracket
+%\usepackage{mathtools}
+% \usepackage{tikz} % drawing diagrams
+%\usepackage{qtree} % tree drawing
+%    \qtreecenterfalse
+
+% \usepackage{tikz-qtree} % draw trees using TikZ using the syntax of Qtree
+%\usepackage{framed} % \framed \shaded and \leftbar environments
+% \usepackage[safe]{tipa} % ipa/phonetic characters % clashes with qtree if thety're both turned on
+% \usetikzlibrary{decorations}
+% \usetikzlibrary{decorations.pathreplacing}
+% \usetikzlibrary{shapes,backgrounds}
+ 
+\usepackage{url} % defines \url command
+% \usepackage[all]{xy} % graphs and diagrams
+% \usepackage{multicol} % multiple columns
+% \usepackage{hanging}
+ 
+\usepackage{parskip} % cleans up spacing layout for particular environments
+    \parskip0.5ex
+
+%\counterwithout{footnote}{chapter} 
+
+\renewcommand{\contentsname}{目录} % redefines the heading of the ToC
+\renewcommand{\listfigurename}{List of figures} % redefines the heading of the LoF
+ 
+\renewcommand{\today}{\number\year 年 \number\month 月 \number\day 日}
+% \usepackage[center]{titlesec}%chapter1修改为第1章
+\titleformat{\chapter}{\raggedright\Huge\bfseries}{第\,\thechapter\,章}{1em}{}
+\titleformat{\section}{\raggedright\Large\bfseries}{\,\thesection\,}{1em}{}
+\titleformat{\subsection}{\raggedright\large\bfseries}{\,\thesubsection\,}{1em}{}
+%\usepackage{enumerate} % old-ish way to enumerate
+%\usepackage{enumitem} % better-ish way to enumerate
+ 
+
+\usepackage{xcolor}
+    \definecolor{dgreen}{rgb}{0.,0.6,0.}
+    \definecolor{ochre}{cmyk}{0, .42, .83, .20}
+    % \definecolor{forest}{cmyk}{.67, .23, .67, .18}
+    % \definecolor{maroon}{cmyk}{0, 1, .07, .5}
+    % \definecolor{peri}{cmyk}{.2,.2,0,0}
+    % \definecolor{plum}{cmyk}{.48,.85,.29,.2}
+    
+%\gathertags % for forward references
+
+\let\eachwordone=\sl
+\singlegloss
+\exewidth{(5.65)}
+\addtolength{\footnotesep}{10pt}
+% \addtolength{\bibsep}{4pt}
+
+%% A bunch of cross-referencing shortcuts:
+\newcommand{\sref}[1]{\S\ref{#1}}
+\newcommand{\srefs}[2]{\S\S\ref{#1}--\ref{#2}}
+\newcommand{\eref}[1]{(\thechapter.\ref{#1})}
+\newcommand{\erefs}[2]{\eref{#1}--\eref{#2}}
+\newcommand{\earef}[2]{(\ref{#1}\ref{#2})}
+\newcommand{\sbref}[1]{(\S\ref{#1})}
+\newcommand{\reff}[1]{\hspace*{\fill}{\mbox{#1}}}
+% \newcommand{\refex}[2][]{\hfill\citep[#1]{#2}}
+\newcommand{\reftex}[1]{\hspace*{\fill}\mbox{(#1)}}
+\newcommand{\tref}[1]{Table~\ref{#1}\xspace}
+\newcommand{\tpref}[1]{Table~\ref{#1} on page~\pageref{#1}\xspace}
+\newcommand{\trefs}[2]{Tables~\ref{#1} and~\ref{#2}\xspace}
+\newcommand{\fref}[1]{Figure~\ref{#1}\xspace}
+\newcommand{\chref}[1]{Chapter~\ref{#1}\xspace}
+\newcommand{\chrefs}[2]{Chapters~\ref{#1}--\ref{#2}\xspace}
+\newcommand{\pref}[1]{page~\pageref{#1}\xspace}
+\newcommand{\prefs}[2]{pages~\pageref{#1}--\pageref{#2}\xspace}
+\newcommand{\aref}[1]{Appendix~\ref{#1}\xspace}
+
+% \newcommand{\qcite}[1]{\citeauthor{#1}'s (\citeyear{#1})\xspace}
+
+\newcommand{\comm}[1]{\textsl{\textbf{\large{{#1}}}}}
+\newcommand{\tit}[1]{\textit{{#1}}}
+\newcommand{\tbf}[1]{\textbf{{#1}}}
+\newcommand{\tsc}[1]{\textsc{{#1}}}
+\newcommand{\fno}[1]{\footnote{\small #1}}
+\newcommand{\nfno}[1]{\footnote{\tbf{#1}}}
+\newcommand{\ipa}[1]{\textipa{{#1}}}
+\newcommand{\ul}[1]{\underline{{#1}}}
+\renewcommand{\>}{\ensuremath >\xspace}
+\newcommand{\<}{\ensuremath <\xspace}
+\newcommand{\ortho}[1]{\ensuremath{<}#1\ensuremath{>}}
+\newcommand{\uar}{\ensuremath\uparrow\xspace}
+
+\newcommand{\var}{\ensuremath{\sim}\xspace}
+\newcommand{\itipa}[1]{\textipa{\textsl{#1}}}
+
+\newcommand{\tup}[1]{\textup{{#1}}}
+\newcommand{\eg}{e.g.\@\xspace}
+\newcommand{\ie}{i.e.\@\xspace}
+\newcommand{\nd}{n.d.\@\xspace}
+\newcommand{\cf}{cf.\@\xspace}

@@ -1,0 +1,263 @@
+\chapter{环境配置}
+
+本章将主要介绍分别使用本地计算资源、深研院计算资源和华为云计算资源时构建环境的方法。
+
+\section{使用本地环境与GPU}
+
+使用本地计算资源可以不收网络链接状况约束，随时随地调试程序，对于简单的项目，本地调试也可能更省时间。
+
+本节以助教所使用的计算机为例，展示环境配置过程。助教使用的计算机系统与配置为：
+\begin{itemize}
+    \item 系统：windows10专业教育版；22H2
+    \item 处理器：Intel(R) Core(TM) i7-8700 CPU 
+    \item 内存：16GB
+    \item 显卡：NVIDIA GeForce RTX 2060
+    \item 编辑器：Visual Studio Code
+\end{itemize}
+
+\subsection{安装CUDA工具箱}
+
+对于包含英伟达显卡的计算机，我们推荐首先安装CUDA工具包以使用GPU加速计算。
+
+\textcolor{red}{\emph{注意，仅包含英伟达GPU的计算机需要安装CUDA工具箱以使用GPU加速计算。使用核显或AMD显卡的计算机再后续步骤中使用CPU计算即可}}
+
+GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划好。
+
+\url(https://developer.nvidia.com/zh-cn/cuda-gpus)
+查看得到我的显卡的2060的算力为7.5。
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/nvidia-rtx-2060-capability.png}
+    \caption{CAPTION holder}
+    \label{LABEL holder}
+\end{figure}
+
+
+\url{https://en.wikipedia.org/wiki/CUDA}
+查看得到支持我显卡的CUDA版本为$\geq$10.0
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/corresponding-cuda-version.png}
+    \caption{CAPTION holder}
+    \label{LABEL holder}
+\end{figure}
+
+\url{https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html}
+同时CUDA对显卡驱动的最低版本也提出了要求，但显卡驱动对CUDA向下兼容，因此一般安装了最近发布的显卡驱动版本即可，无需与CUDA版本特别对应。
+
+
+\url{https://pytorch.org/get-started/locally/}
+最后要注意，PyTorch并不一定支持最新的CUDA版本，因此安装前再去PyTorch上看一眼PyTorch支持哪些CUDA版本。
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/cuda-version-constrained-by-pytorch.png}
+    \caption{CAPTION holder}
+    \label{LABEL holder}
+\end{figure}
+
+我们发现PyTorch最高支持到CUDA 11.7，满足显卡算力对CUDA版本$\geq$10.0的要求，因此我们可以选择安装CUDA 11.7。
+
+选择对应版本CUDA安装包并下载安装, 安装过程略。
+\url{https://developer.nvidia.com/cuda-toolkit-archive}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/select-cuda-version.png}
+	\caption{CAPTION holder}
+	\label{LABEL holder}
+\end{figure}
+
+在这一步完成后，我们打开终端输入\graylstinline{nvcc -V}以及\graylstinline{nvidia-smi}应当分别能看到图\ref{fig:nvcc-v-install-success}和图\ref{fig:nvidia-smi-install-success}类似的输出，这说明我们安装完成。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/nvcc-v-install-success.png}
+	\caption{caption:nvcc-v-install-success}
+	\label{fig:nvcc-v-install-success}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/nvidia-smi-install-success.png}
+	\caption{caption:nvidia-smi-install-success}
+	\label{fig:nvidia-smi-install-success}
+\end{figure}
+
+\subsection{安装Anaconda}
+
+我们可能同时有多个项目或作业在处理，而不同的项目或作业可能使用了不同python版本、不同的工具包等，为了避免冲突，我们通常会为每一个项目或作业指定一个虚拟环境，以使得各个环境之间互不干扰。为此，我们Anaconda以创建并管理虚拟环境。
+
+安装过程参考官网文档即可：
+\url{https://docs.anaconda.com/anaconda/install/windows/}
+
+安装完成后启动终端，输入\graylstinline{conda -V}，如正确显示conda版本则说明安装成功。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/conda-install-success.png}
+	\caption{CAPTION holder}
+	\label{LABEL holder}
+\end{figure}
+
+\subsection{创建虚拟环境并安装PyTorch}
+
+安装完成conda后，我们新建一个预装了Python的、用来完成本门课程的虚拟环境。
+
+需要注意的是，PyTorch和Python版本也需要对应，在\url{https://github.com/pytorch/vision#installation}中，我们发现torch 1.13要求python 介于3.7.2和3.10之间。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/pytorch-python-version-compability.png}
+	\caption{CAPTION holder}
+	\label{LABEL holder}
+\end{figure}
+
+打开终端，输入下面命令以利用conda新建环境，
+\begin{lstlisting}
+    $ conda create --name <envname> python=3.9
+    $ 
+\end{lstlisting}
+将其中<envname>改成自定义的环境名称，如助教自己选择的distributedml。
+
+新建完成后，通过\graylstinline{conda activate <envname>}进入环境。在pytorch官网安装页面\url{https://pytorch.org/get-started/locally/}选择对应的pytorch版本、系统版本等，复制给出的命令并运行。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/pytorch-install-command.png}
+	\caption{CAPTION holder}
+	\label{fig:pytorch-install-command}
+\end{figure}
+
+安装完成后，进入Python就可以\graylstinline{import torch}了，如图\ref{fig:pytorch-install-success}.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/pytorch-install-success.png}
+	\caption{caption:pytorch-install-success}
+	\label{fig:pytorch-install-success}
+\end{figure}
+
+
+% \subsection{使用VSCode编辑python文件}
+
+% 以实验一为例，VSCode安装Python插件后，
+
+
+\section{使用虚拟环境与本地GPU}
+
+上面的本地环境配置不可为不复杂，CUDA、显卡型号、显卡驱动、PyTorch、Python等版本需要手动一一对应起来安装。那有没有什么更简单的利用本机GPU计算资源的方法呢？
+
+在这一节，我们介绍直接利用Docker镜像搭配环境的方法。
+
+\subsection{安装并配置Docker引擎}
+
+首先在官网下载安装包\url{https://docs.docker.com/desktop/install/windows-install/}，安装过程略。
+
+在安装完成后启动Docker Desktop，在windows下，很可能会报错（具体内容是啥助教忘了截图了），一般错误的原因是缺少wsl2和hyper-v。
+
+为了启用hyper-v，在控制面板中按照图\ref{fig:turn-on-hyper-v}中的操作选中Hyper-V并确定。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/turn-on-hyper-v.png}
+	\caption{caption:turn-on-hyper-v}
+	\label{fig:turn-on-hyper-v}
+\end{figure}
+
+为了启用wsl2，参考\url{https://learn.microsoft.com/en-us/windows/wsl/install}，在终端下输入\graylstinline{wsl --install}等待安装完成即可。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/docker-mirrors-setting.png}
+	\caption{caption:docker-mirrors-setting}
+	\label{fig:docker-mirrors-setting}
+\end{figure}
+
+安装完成后启动Docker Desktop，为了加速下载，可以按照图\ref{fig:docker-mirrors-setting}所示方法为Docker指定国内镜像服务器，即在原本的配置中加入如下内容。
+\begin{lstlisting}
+    "registry-mirrors": [
+        "http://hub-mirror.c.163.com",
+        "https://docker.mirrors.ustc.edu.cn",
+        "https://registry.docker-cn.com"
+    ]
+\end{lstlisting}
+
+启动终端，输入\graylstinline{docker --version}，如图\ref{fig:docker-install-success}，正常返回Docker版本就说明安装成功了。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/docker-install-success.png}
+	\caption{caption:docker-install-success}
+	\label{fig:docker-install-success}
+\end{figure}
+
+
+\subsection{搜索并下载PyTorch镜像}
+
+Dockerhub是一个共享镜像的平台\url{https://hub.docker.com/}。所谓镜像，类似于一个操作系统的iso文件：我们拿到iso文件后可以创建使用该操作系统的虚拟机；而当我们拿到镜像后，也可以利用该镜像创造一个使用该镜像的容器，即容器是一个镜像的实例。
+
+因此，如果有人在某个容器中把CUDA、PyTorch、Python等环境都配置好，并打包成镜像共享给我们，我们就可以免去复杂的安装过程，从而直接使用镜像生成容器，在容器中直接运行我们所写的脚本。
+
+在DockerHub中，我们搜索\graylstinline{pytorch/pytorch}，可以找到对应的这个镜像\url{https://hub.docker.com/r/pytorch/pytorch}。点击网页中的Tags标签页，我们可以从图\ref{fig:pytorch-image-tags-web}看到这个镜像就是已经把PyTorch和CUDA安装好了的,我们直接使用这个镜像就好啦！
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/pytorch-image-tags-web.png}
+	\caption{caption:pytorch-image-tags-web}
+	\label{fig:pytorch-image-tags-web}
+\end{figure}
+
+下载这个镜像前，还需要登录的。首先去注册个账号，然后打开终端，输入\graylstinline{docker login}登录。
+
+然后就可以通过这条命令下载这个镜像了：
+
+\begin{lstlisting}
+    $ docker pull pytorch/pytorch:1.13.1-cuda11.6-cudnn8-runtime
+    $
+\end{lstlisting}
+
+
+这个镜像比较大，下载需要一点时间。完成后，我们再输入\graylstinline{docker image list}就可以看到这个镜像了，见图\ref{fig:docker-image-list-pytorch}。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/docker-image-list-pytorch.png}
+	\caption{caption:docker-image-list-pytorch}
+	\label{fig:docker-image-list-pytorch}
+\end{figure}
+
+\subsection{启动容器}
+
+下载完镜像，我们该通过这个镜像启动一个容器了，我们需要到容器里看看这个容器里面是不是有我们需要的环境。
+
+打开终端，输入
+\begin{lstlisting}
+    $ docker run -it pytorch/pytorch:1.13.1-cuda11.6-cudnn8-runtime
+\end{lstlisting}
+我们发现我们进入了一个linux系统，进去运行一下\graylstinline{nvidia-smi}试试，诶，怎么command not found，看不到显卡。这是因为容器启动时没有给他指定GPU。我们输入\graylstinline{exit}，然后加上GPU参数再试一下
+\begin{lstlisting}
+    $ docker run --gpus all -it pytorch/pytorch:1.13.1-cuda11.6-cudnn8-runtime 
+\end{lstlisting}
+
+进入容器后，我们输入\graylstinline{nvidia-smi}等命令，查看运行结果，如图\ref{fig:docker-pytorch-container-env-check}所示，发现正是我们所需要的环境。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/docker-pytorch-container-env-check.png}
+	\caption{caption:docker-pytorch-container-env-check}
+	\label{fig:docker-pytorch-container-env-check}
+\end{figure}
+
+可是如何使用这个环境呢，我们留到完成具体实验内容的时候再来讲。
+
+
+\subsection{限制Docker内存占用(TODO，可选)}
+
+TODO
+
+
+\section{华为云计算资源}
+
+
+
+
+\begin{lstlisting}[language=Python, caption=Python example]
+    some python code here?
+            return model
+\end{lstlisting}
