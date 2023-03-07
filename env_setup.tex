@@ -247,6 +247,7 @@ Dockerhub是一个共享镜像的平台\url{https://hub.docker.com/}。所谓镜
 	\label{fig:docker-pytorch-container-env-check}
 \end{figure}
 
+
 \subsection{安装新包后重新打包成镜像}\label{subsec:container-to-image}
 
 但是，也有一些包在默认的镜像里是没有的，万一我们需要这些包，比如matplotlib包，难道我们要每次启动新的容器之后都手动通过\graylstinline{conda install}安装一下么？不用的，我们安装一次之后，将这个容器重新打包成一个新的镜像就好了！我们之后再用，就用新的镜像了。
@@ -315,6 +316,8 @@ swapfile=E:\\wsl-swap.vhdx
 	\caption{caption:sigs-platform-dev-env-image-selection}
 	\label{fig:sigs-platform-dev-env-image-selection}
 \end{figure}
+
+创建时指定的储存路径会挂载到环境的\graylstinline{/private}目录下。
 
 \subsection{安装其他软件或包}
 

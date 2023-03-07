@@ -72,7 +72,7 @@ Adam：
 \end{align}
 
 
-\section{使用VSCode与本地环境调试运行}
+\section{使用VSCode与本地环境调试运行}\label{sec:task1-local-debug}
 
 如果你已经完成了本地环境配置(\S\ref{sec:local-env})，那就可以打开VSCode进行下面的操作了：
 
@@ -84,7 +84,7 @@ Adam：
             \caption{caption:task1-vscode-extension-install-python}
             \label{fig:task1-vscode-extension-install-python}
         \end{figure}
-    \item 选择Python解释器，按下\graylstinline{F1}或\graylstinline{Ctrl + Shift + P}，输入 "select interpreter"并选择 “Python: Select Interpreter”项（图\ref{fig:task1-vscode-local-select-interpreter}）。然后选择：select at work space level。最后选择你在\S\ref{subsec:local-env-create}一孝节中创建的环境对应的解释器（图\ref{fig:task1-vscode-local-select-my-env}中为助教自己创建的distributedml环境）。
+    \item 选择Python解释器，按下\graylstinline{F1}或\graylstinline{Ctrl}+\graylstinline{Shift}+\graylstinline{P}，输入 "select interpreter"并选择 “Python: Select Interpreter”项（图\ref{fig:task1-vscode-local-select-interpreter}）。然后选择：select at work space level。最后选择你在\S\ref{subsec:local-env-create}一孝节中创建的环境对应的解释器（图\ref{fig:task1-vscode-local-select-my-env}中为助教自己创建的distributedml环境）。
         \begin{figure}[htbp]
             \centering
             \includegraphics[width=0.7\textwidth]{figures/task1-vscode-local-select-interpreter.png}
@@ -109,6 +109,77 @@ Adam：
 
 \section{使用VSCode与本地容器调试运行}
 
+\subsection{启动容器}
+
+在\S\ref{subsec:container-to-image}一小节中，我们创建了自己的镜像，现在，我们需要先启动这个镜像（对于助教而言是\graylstinline{cantjie/pytorch:1.13.1}）。但是，目前镜像里面可没有我们写好的代码，而且，就算我们在镜像里面写好代码，该怎么拿出来交作业呢？
+
+为了解决这个问题，我们就需要将本地的目录挂在到容器上，在启动容器是，我们使用\graylstinline{-v <host-dir>:<container-dir>}参数，参考下面命令执行：
+\begin{lstlisting}
+    $ docker run -it --gpus all -v $pwd/relative/path/to/code:/workspace cantjie/pytorch:1.13.1
+\end{lstlisting}
+
+现在进入容器后，我们可以看到，如图\ref{fig:task1-docker-run-with-mount}所示，本地的代码已经被挂在到了\graylstinline{\workspace}文件夹下。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/task1-docker-run-with-mount.png}
+	\caption{caption:task1-docker-run-with-mount}
+	\label{fig:task1-docker-run-with-mount}
+\end{figure}
+
+\subsection{在VSCode中使用容器}
+
+首先安装Dev Container插件，然后按下\graylstinline{Ctrl}+\graylstinline{Shift}+\graylstinline{P}，并找到Attatch to Running Container命令，如图\ref{fig:task1-vscode-attach-to-container-quick-search}。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/task1-vscode-attach-to-container-quick-search.png}
+	\caption{caption:task1-vscode-attach-to-container-quick-search}
+	\label{fig:task1-vscode-attach-to-container-quick-search}
+\end{figure}
+
+接下来会弹出一个新窗口，在这个新窗口中，就像在本地环境下调试运行一样在容器里调试运行即可。余下的步骤基本参考上一小节\S\ref{sec:task1-local-debug}中的操作即可。即
+\begin{itemize}
+    \item 在VSCode侧边栏Explorer栏目中打开\graylstinline{/workspace}目录。
+    \item 在VSCode安装Python插件。
+    \item 选择编译器为\graylstinline{/opt/conda/bin/python}
+\end{itemize}
 
 \section{使用VSCode与远程服务器调试运行}
 
+深研院平台和华为云平台的远程服务器使用方法类似，此处以学校的环境为例。在学校的计算平台创建了开发环境后，平台会提供ssh链接地址以及用户名和密码，我们使用该信息链接远程环境。
+
+首先在VSCode中安装Remote SSH插件，然后按下\graylstinline{Ctrl}+\graylstinline{Shift}+\graylstinline{P}，搜索Remote-SSH: Open SSH Configuration File命令（图\ref{fig:task1-open-ssh-config-file}）。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/task1-open-ssh-config-file.png}
+	\caption{caption:task1-open-ssh-config-file}
+	\label{fig:task1-open-ssh-config-file}
+\end{figure}
+
+在下拉列表中选择 C:\textbackslash Users\textbackslash <username>\textbackslash .ssh.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/task1-ssh-config-file-demo.png}
+	\caption{caption:task1-ssh-config-file-demo}
+	\label{fig:task1-ssh-config-file-demo}
+\end{figure}
+
+在打开的.ssh文件中， 按照图\ref*{fig:task1-ssh-config-file-demo}给出的格式，添加一个主机。其中Host对应昵称，HostName为远程主机IP。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/task1-vscode-connect-to-host-quick-search.png}
+	\caption{caption:task1-vscode-connect-to-host-quick-search}
+	\label{fig:task1-vscode-connect-to-host-quick-search}
+\end{figure}
+
+最后，\graylstinline{Ctrl}+\graylstinline{Shift}+\graylstinline{P}并搜索Remote-SSH: Connect to Host命令，并在后续选择刚刚创建的主机信息。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/taks1-vscode-connect-to-certain-host-quick-search.png}
+	\caption{caption:taks1-vscode-connect-to-certain-host-quick-search}
+	\label{fig:taks1-vscode-connect-to-certain-host-quick-search}
+\end{figure}
+
+在弹出的窗口等待连接，并输入密码。余下的步骤又和上一小节一样了：打开文件夹、安装Python扩展、指定解释器。此处不再赘述。
