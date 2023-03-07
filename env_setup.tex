@@ -2,7 +2,7 @@
 
 本章将主要介绍分别使用本地计算资源、深研院计算资源和华为云计算资源时构建环境的方法。
 
-\section{使用本地环境与GPU}
+\section{使用本地环境与GPU}\label{sec:local-env}
 
 使用本地计算资源可以不收网络链接状况约束，随时随地调试程序，对于简单的项目，本地调试也可能更省时间。
 
@@ -16,6 +16,8 @@
 \end{itemize}
 
 \subsection{安装CUDA工具箱}
+\textcolor{red}{TODO 这一部分只是贴了网址,没有写成教程}
+
 
 对于包含英伟达显卡的计算机，我们推荐首先安装CUDA工具包以使用GPU加速计算。
 
@@ -23,7 +25,7 @@
 
 GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划好。
 
-\url(https://developer.nvidia.com/zh-cn/cuda-gpus)
+\url{https://developer.nvidia.com/zh-cn/cuda-gpus}
 查看得到我的显卡的2060的算力为7.5。
 
 \begin{figure}[htbp]
@@ -99,7 +101,7 @@ GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划
 	\label{LABEL holder}
 \end{figure}
 
-\subsection{创建虚拟环境并安装PyTorch}
+\subsection{创建虚拟环境并安装PyTorch} \label{subsec:local-env-create}
 
 安装完成conda后，我们新建一个预装了Python的、用来完成本门课程的虚拟环境。
 
@@ -115,7 +117,6 @@ GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划
 打开终端，输入下面命令以利用conda新建环境，
 \begin{lstlisting}
     $ conda create --name <envname> python=3.9
-    $ 
 \end{lstlisting}
 将其中<envname>改成自定义的环境名称，如助教自己选择的distributedml。
 
@@ -137,6 +138,9 @@ GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划
 	\label{fig:pytorch-install-success}
 \end{figure}
 
+\subsection{安装其他包}
+
+如果我们还想要安装其他包，比如同学们画图常用的matplotlib包，该怎么办呢？在\graylstinline{conda activate <envname>}进入环境后，直接通过\graylstinline{conda install matplotlib}就可以了。
 
 % \subsection{使用VSCode编辑python文件}
 
@@ -211,7 +215,6 @@ Dockerhub是一个共享镜像的平台\url{https://hub.docker.com/}。所谓镜
 
 \begin{lstlisting}
     $ docker pull pytorch/pytorch:1.13.1-cuda11.6-cudnn8-runtime
-    $
 \end{lstlisting}
 
 
@@ -244,20 +247,111 @@ Dockerhub是一个共享镜像的平台\url{https://hub.docker.com/}。所谓镜
 	\label{fig:docker-pytorch-container-env-check}
 \end{figure}
 
-可是如何使用这个环境呢，我们留到完成具体实验内容的时候再来讲。
+\subsection{安装新包后重新打包成镜像}\label{subsec:container-to-image}
 
+但是，也有一些包在默认的镜像里是没有的，万一我们需要这些包，比如matplotlib包，难道我们要每次启动新的容器之后都手动通过\graylstinline{conda install}安装一下么？不用的，我们安装一次之后，将这个容器重新打包成一个新的镜像就好了！我们之后再用，就用新的镜像了。
 
-\subsection{限制Docker内存占用(TODO，可选)}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\textwidth]{figures/docker-commit-new-image.png}
+	\caption{caption:docker-commit-new-image}
+	\label{fig:docker-commit-new-image}
+\end{figure}
 
-TODO
-
-
-\section{华为云计算资源}
-
-
-
-
-\begin{lstlisting}[language=Python, caption=Python example]
-    some python code here?
-            return model
+在刚才启动的容器里，我们输入\graylstinline{conda install matplotlib}，安装完成后，输入\graylstinline{exit}退出容器。回到windows下的命令行，输入\graylstinline{docker ps -a}查看所有容器，如图\ref{fig:docker-commit-new-image}所示，我们发现刚刚安装了matplotlib的容器的id为\graylstinline{23dcfbd17a23}。接下来，我们运行
+\begin{lstlisting}
+	$ # docker commit <containerID> <new-image-name>:<tags>
+	$ docker commit 23dcfbd17a23 new-image:1.13.1
 \end{lstlisting}
+便将容器打包成了一个镜像。输入\graylstinline{docker image list}，便可以看到我们新建的容器了。
+
+以后就都可以用这个新镜像了，可是如何使用这个环境呢，我们留到完成具体实验内容的时候再来讲。
+
+\subsection{限制Docker内存占用(可选)}
+
+由于docker占用内存很大，对于内存不足的电脑可能造成卡顿现象，可以通过修改配置文件限制其内存占用。
+
+修改C:\textbackslash users\textbackslash<username>\textbackslash .wslconfig 
+
+\begin{lstlisting}
+[wsl2]
+memory=6GB
+swap=6GB
+swapfile=E:\\wsl-swap.vhdx
+\end{lstlisting}
+
+
+
+\section{使用华为云计算资源}
+
+
+\section{使用深研院计算资源}
+
+助教会为同学们下发用户名和密码。使用自己的账户信息登录网址：\url{http://10.103.9.27:30000/}(或使用助教的域名\url{http://sigs-gpu.cantjie.com:30000})
+
+\subsection{创建开发环境}
+
+登录系统后，我们需要创建一个开发环境。如图\ref{fig:sigs-platform-dev-env-before-create}所示，首先在左侧边栏选择AI分区->开发环境，然后点击创建。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/sigs-platform-dev-env-before-create.png}
+	\caption{caption:sigs-platform-dev-env-before-create}
+	\label{fig:sigs-platform-dev-env-before-create}
+\end{figure}
+
+在弹出的窗口图\ref{fig:sigs-platform-dev-env-create}中，设置环境名称、镜像、储存位置、资源规格等信息。其中，当与小组同学共享账号时，请不要直接选择默认的资源规格，请通过自定义，限制环境所需的CPU核心数量、储存空间大小和显卡数量。对于我们的实验，系统自带的镜像已基本可以满足需求，因此在镜像选择中，按图\ref{fig:sigs-platform-dev-env-image-selection}所示选择superadmin/pytorch:1.12.0-cuda11.3-cudnn8-runtime即可（实验时镜像标签可能会更新，选择类似的或最新的即可）。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/sigs-platform-dev-env-create.png}
+	\caption{caption:sigs-platform-dev-env-create}
+	\label{fig:sigs-platform-dev-env-create}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/sigs-platform-dev-env-image-selection.png}
+	\caption{caption:sigs-platform-dev-env-image-selection}
+	\label{fig:sigs-platform-dev-env-image-selection}
+\end{figure}
+
+\subsection{安装其他软件或包}
+
+新建完成后，点击启动，等待镜像状态变为运行中，访问方式一栏会出现SSH、远程桌面和VNC三种连接方式，操作一栏的打开按钮也会有灰变蓝。
+
+当我们需要使用镜像中尚未安装的工具或包时，可以通过访问方式提供的三种方式安装，譬如，在本地使用ssh连接服务器后，运行\graylstinline{conda install matplotlib}或\graylstinline{apt install git}等；也可通过点击打开按钮，在弹出页面中进入终端并安装，见图\ref{fig:sigs-platform-env-install-packages-via-web}。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/sigs-platform-env-install-packages-via-web.png}
+	\caption{caption:sigs-platform-env-install-packages-via-web}
+	\label{fig:sigs-platform-env-install-packages-via-web}
+\end{figure}
+
+
+\subsection{创建镜像环境}
+
+\textcolor{red}{\emph{注意，截止本指导书书发布时，由于平台缺乏技术文档，个人制作的镜像可能无法让容器正常启动。该小节仍有待完善。}}
+
+\textcolor{red}{\emph{注意，该平台为x86架构，arm平台上创建的镜像无法运行在该平台}}
+
+镜像创建方法可参考\S\ref{subsec:container-to-image}。
+
+
+在本地创建镜像后，使用\graylstinline{docker save -o filename.tar imagename:tag}\footnote{注意，此处不可使用sha256格式的imageID代替<imagename>:<tag>的格式，不然平台可能无法正确处理该镜像}命令导出镜像文件，然后上传至文件管理->我的文件栏目下（图\ref{fig:sigs-platform-upload-file}）。然后在镜像服务->我的镜像中创建镜像(图\ref{fig:sigs-platform-create-custom-image})。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.3\textwidth]{figures/sigs-platform-upload-file.png}
+	\caption{caption:sigs-platform-upload-file}
+	\label{fig:sigs-platform-upload-file}
+\end{figure}
+
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=1\textwidth]{figures/sigs-platform-create-custom-image.png}
+	\caption{caption:sigs-platform-create-custom-image}
+	\label{fig:sigs-platform-create-custom-image}
+\end{figure}
