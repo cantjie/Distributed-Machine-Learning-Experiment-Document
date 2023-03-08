@@ -20,7 +20,7 @@
 
 在本次实验中，我们采用PyTorch中的\graylstinline{torch.distributed}模块（下面将简写为\graylstinline{dist}）作为多节点通信的支持工具。
 
-\subsubsection{初始化进程组}
+\subsubsection{初始化进程组}\label{subsubsec:task2-init-process-group}
 
 多节点通信的第一步，是初始化进程组。因此每个节点在训练之前，需要先调用\graylstinline{dist.init_process_group()}函数来初始化进程。这个函数会阻塞当前进程，并等待其他进程加入，阻塞持续至直到所有节点（进程）都加入了进来。
 
@@ -118,6 +118,8 @@ if __name__ == "__main__":
 
 \subsection{Docker compose介绍}
 
+如果你也在windows下，并且安装了docker desktop，那么docker compose已经是自带得了，不需要额外安装了。docker compose就是通过使用一个模板文件（yaml格式）来定义一组的相关联的应用容器的程序。我们首先来看一下这个所谓的模板文件是什么样的叭。
+
 我们以助教发给大家的\graylstinline{docker-compose.yml}为例，我们取其中的一部分先简单分析一下这个文件的内容。
 \begin{lstlisting}
 services:
@@ -159,7 +161,7 @@ services:
 
 \subsection{通过Docker compose启动容器}
 
-将这个文件和\graylstinline{model.py}放到同一个目录下，然后终端\graphicspath{cd}到这里，输入\graylstinline{docker compose up}就完成啦，我们就可以看到程序已经开始训练了！如图\ref{fig:task2-docker-compose-up}所示。
+将这个文件和\graylstinline{model.py}放到同一个目录下，然后终端\graylstinline{cd}到这里，输入\graylstinline{docker compose up}就完成啦，我们就可以看到程序已经开始训练了！如图\ref{fig:task2-docker-compose-up}所示。
 
 
 \begin{figure}[htbp]
