@@ -21,4 +21,30 @@
 \end{itemize}
 
 
-\subsection{}
+\subsection{数据集、加载器和采样器}
+
+在Pytorch中，分布式训练加载数据过程中涉及到这样三个重要的类，即\graylstinline{Dataset}、\graylstinline{Sampler}、\graylstinline{DataLoader}：
+\begin{itemize}
+    \item \graylstinline{Dataset}类：它直接接触源数据，将数据总数目交给\graylstinline{Sampler}，将提取数据的接口交给\graylstinline{Datal}。
+    \item \graylstinline{Sampler}类：定义\graylstinline{DataLoader}遍历数据索引的方式。
+    \item \graylstinline{DataLoader}类：在得到\graylstinline{Sampler}提供的数据索引后，去\graylstinline{Dataset}中提取数据，并将得到的数据用于训练。
+\end{itemize}
+
+他们之间的关系可以用图\ref{fig:task3-sampler-dataset-dataloader}来表示。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/task3-sampler-dataset-dataloader.png}
+	\caption{caption:task3-sampler-dataset-dataloader}
+	\label{fig:task3-sampler-dataset-dataloader}
+\end{figure}
+
+在我们的实验中，我们主要需要实现\graylstinline{Sampler}类，除了构造函数外，还需要实现该类中的\graylstinline{__iter__()}方法和\graylstinline{__len__()}方法。
+在\graylstinline{__iter__()}方法中，需要返回包含样本序列号的一个迭代器，譬如，一段最简单的迭代器可以这样实现：
+\begin{lstlisting}
+def __iter__(self):
+    indices=list(range(len(self.dataset)))
+    return iter(indices)
+\end{lstlisting}
+
+\graylstinline{__len__()}方法则应当返回上述迭代器中的数据个数。除此之外，我们也可以尝试在\graylstinline{Sampler}中实现其他功能，譬如\graylstinline{set_epoch()}方法，并在每一轮训练前调用该方法，以避免每一轮训练都得到同样的indices序列。
+
