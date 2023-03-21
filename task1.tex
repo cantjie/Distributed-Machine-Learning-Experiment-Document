@@ -54,6 +54,33 @@ def train_loop(dataloader, model, loss_fn, optimizer):
     \item 使用Adam算法时，由于还需要上一步优化得到的状态，因此可在初始化函数中构建一个字典用来储存状态。
 \end{itemize}
 
+\subsection{MindSpore优化器}
+
+除了使用Pytorch，我们还鼓励同学们使用MindSpore来完成实验。
+
+在MindSpore中，可以通过继承\graylstinline{mindspore.nn.optim.optimizer.Optimizer}类来自定义自己的优化器。在Pytorch中，我们需要实现构造函数和\graylstinline{step()}函数，类似的，在MindSpore中，我们需要实现构造函数和\graylstinline{construct()}函数，\graylstinline{construct()}函数与\graylstinline{step()}函数作用类似。
+
+在构造函数中，我们将神经网络参数、学习速率、衰减速率等变量存入实例。而与Pytorch的\graylstinline{step()}函数不同的是，\graylstinline{construct()}函数需要\graylstinline{gradients}参数作为输入。并且在计算完新的神经网络参数值后，需要使用\graylstinline{mindspore.ops.assign(old_param, new_param)}函数将新的参数值赋予神经网络。
+
+一个简单的优化器实现如下：
+\textcolor{red}{TODO，此处仍需优化}
+\begin{lstlisting}
+    from mindspore.nn.optim.optimizer import Optimizer
+    from mindspore import ops
+
+    class GdOptimizer(Optimizer):
+        def __init__(self, params, lr=0.001):
+            super(GdOptimizer, self).__init__(params, lr)
+            self.params = params
+            self.lr = lr
+        
+        def construct(self, gradients):
+            success = None
+            for param, grad in zip(self.parameters, gradients):
+                update = param - self.learning_rate * grad
+                success = ops.assign(param, update)
+            return success
+\end{lstlisting}
 
 \subsection{几种算法回顾}
 

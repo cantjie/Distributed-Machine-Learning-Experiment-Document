@@ -1,4 +1,4 @@
-\chapter{环境配置}
+\chapter{环境配置与云计算资源使用}
 
 本章将主要介绍分别使用本地计算资源、深研院计算资源和华为云计算资源时构建环境的方法。
 
@@ -26,23 +26,23 @@
 GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划好。
 
 \url{https://developer.nvidia.com/zh-cn/cuda-gpus}
-查看得到我的显卡的2060的算力为7.5。
+查看得到我的显卡的2060的算力为7.5,图\ref{fig:nvidia-rtx-2060-capability}。
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figures/nvidia-rtx-2060-capability.png}
-    \caption{CAPTION holder}
-    \label{LABEL holder}
+    \caption{fig:nvidia-rtx-2060-capability}
+    \label{fig:nvidia-rtx-2060-capability}
 \end{figure}
 
 
 \url{https://en.wikipedia.org/wiki/CUDA}
-查看得到支持我显卡的CUDA版本为$\geq$10.0
+查看得到支持我显卡的CUDA版本为$\geq$10.0，图\ref{fig:corresponding-cuda-version}。
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figures/corresponding-cuda-version.png}
-    \caption{CAPTION holder}
-    \label{LABEL holder}
+    \caption{fig:corresponding-cuda-version}
+    \label{fig:corresponding-cuda-version}
 \end{figure}
 
 \url{https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html}
@@ -50,24 +50,24 @@ GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划
 
 
 \url{https://pytorch.org/get-started/locally/}
-最后要注意，PyTorch并不一定支持最新的CUDA版本，因此安装前再去PyTorch上看一眼PyTorch支持哪些CUDA版本。
+最后要注意，PyTorch并不一定支持最新的CUDA版本，因此安装前再去PyTorch上看一眼PyTorch支持哪些CUDA版本，图\ref{fig:cuda-version-constrained-by-pytorch}。
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figures/cuda-version-constrained-by-pytorch.png}
-    \caption{CAPTION holder}
-    \label{LABEL holder}
+    \caption{fig:cuda-version-constrained-by-pytorch}
+    \label{fig:cuda-version-constrained-by-pytorch}
 \end{figure}
 
 我们发现PyTorch最高支持到CUDA 11.7，满足显卡算力对CUDA版本$\geq$10.0的要求，因此我们可以选择安装CUDA 11.7。
 
-选择对应版本CUDA安装包并下载安装, 安装过程略。
+选择对应版本CUDA安装包并下载安装, 安装过程略，图\ref{fig:select-cuda-version}。
 \url{https://developer.nvidia.com/cuda-toolkit-archive}
 
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.7\textwidth]{figures/select-cuda-version.png}
-	\caption{CAPTION holder}
-	\label{LABEL holder}
+	\caption{fig:select-cuda-version}
+	\label{fig:select-cuda-version}
 \end{figure}
 
 在这一步完成后，我们打开终端输入\graylstinline{nvcc -V}以及\graylstinline{nvidia-smi}应当分别能看到图\ref{fig:nvcc-v-install-success}和图\ref{fig:nvidia-smi-install-success}类似的输出，这说明我们安装完成。
@@ -283,7 +283,8 @@ swapfile=E:\\wsl-swap.vhdx
 
 
 
-\section{使用华为云计算资源}
+\section{使用华为云计算资源}\label{sec:huawei-cloud-usage}
+\textcolor{red}{TODO 申请完计算资源之后完成这部分教程}
 
 
 \section{使用深研院计算资源}
