@@ -63,16 +63,14 @@ def train_loop(dataloader, model, loss_fn, optimizer):
 在构造函数中，我们将神经网络参数、学习速率、衰减速率等变量存入实例。而与Pytorch的\graylstinline{step()}函数不同的是，\graylstinline{construct()}函数需要\graylstinline{gradients}参数作为输入。并且在计算完新的神经网络参数值后，需要使用\graylstinline{mindspore.ops.assign(old_param, new_param)}函数将新的参数值赋予神经网络。
 
 一个简单的优化器实现如下：
-\textcolor{red}{TODO，此处仍需优化}
 \begin{lstlisting}
     from mindspore.nn.optim.optimizer import Optimizer
     from mindspore import ops
 
     class GdOptimizer(Optimizer):
         def __init__(self, params, lr=0.001):
-            super(GdOptimizer, self).__init__(params, lr)
-            self.params = params
-            self.lr = lr
+            super(GdOptimizer, self).__init__(lr, params)
+
         
         def construct(self, gradients):
             success = None
@@ -81,6 +79,8 @@ def train_loop(dataloader, model, loss_fn, optimizer):
                 success = ops.assign(param, update)
             return success
 \end{lstlisting}
+
+更多资料还可以参考mindspore官方文档：\url{https://mindspore.cn/tutorials/zh-CN/r2.0.0-alpha/advanced/modules/optimizer.html?highlight=%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BC%98%E5%8C%96%E5%99%A8}
 
 \subsection{几种算法回顾}
 
