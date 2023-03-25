@@ -1,4 +1,4 @@
-\chapter{实验一：梯度下降单机优化}
+\chapter{实验一：梯度下降单机优化}\label{chapter:task1}
 
 \section{实验内容与要点介绍}
 
@@ -134,18 +134,18 @@ Adam：
 \end{enumerate}
 
 
-\section{使用VSCode与本地容器调试运行}
+\section{使用VSCode与本地容器调试运行}\label{sec:vscode-and-docker-container}
 
 \subsection{启动容器并挂载本地文件夹}\label{subsec:docker-run-and-mount-volume}
 
 在\S\ref{subsec:container-to-image}一小节中，我们创建了自己的镜像，现在，我们需要先启动这个镜像（对于助教而言是\graylstinline{cantjie/pytorch:1.13.1}）。但是，目前镜像里面可没有我们写好的代码，而且，就算我们在镜像里面写好代码，该怎么拿出来交作业呢？
 
-为了解决这个问题，我们就需要将本地的目录挂在到容器上，在启动容器是，我们使用\graylstinline{-v <host-dir>:<container-dir>}参数，参考下面命令执行：
+为了解决这个问题，我们就需要将本地的目录挂载到容器上，在启动容器时，我们使用\graylstinline{-v <host-dir>:<container-dir>}参数，参考下面命令执行：
 \begin{lstlisting}
     $ docker run -it --gpus all -v $pwd/relative/path/to/code:/workspace cantjie/pytorch:1.13.1
 \end{lstlisting}
 
-现在进入容器后，我们可以看到，如图\ref{fig:task1-docker-run-with-mount}所示，本地的代码已经被挂在到了\graylstinline{\workspace}文件夹下。
+现在进入容器后，我们可以看到，如图\ref{fig:task1-docker-run-with-mount}所示，本地的代码已经被挂载到了\graylstinline{\workspace}文件夹下。
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.9\textwidth]{figures/task1-docker-run-with-mount.png}
@@ -172,7 +172,9 @@ Adam：
 
 \section{使用VSCode与远程服务器调试运行}
 
-深研院平台和华为云平台的远程服务器使用方法类似，此处以学校的环境为例。在学校的计算平台创建了开发环境后，平台会提供ssh链接地址以及用户名和密码，我们使用该信息链接远程环境。
+% 深研院平台和华为云平台的远程服务器使用方法类似，此处以学校的环境为例。
+\subsection{使用深研院计算资源}\label{subsec:task1-vscode-using-sigs-resources}
+在学校的计算平台创建了开发环境后，平台会提供ssh链接地址以及用户名和密码，我们使用该信息链接远程环境。
 
 首先在VSCode中安装Remote SSH插件，然后按下\graylstinline{Ctrl}+\graylstinline{Shift}+\graylstinline{P}，搜索Remote-SSH: Open SSH Configuration File命令（图\ref{fig:task1-open-ssh-config-file}）。
 \begin{figure}[htbp]
@@ -186,8 +188,8 @@ Adam：
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.7\textwidth]{figures/task1-ssh-config-file-demo.png}
-	\caption{caption:task1-ssh-config-file-demo}
+	\includegraphics[width=0.6\textwidth]{figures/task1-ssh-config-file-demo.png}
+	\caption{ssh config file demo。注意，图中示例包含两个主机。}
 	\label{fig:task1-ssh-config-file-demo}
 \end{figure}
 
@@ -209,4 +211,53 @@ Adam：
 	\label{fig:taks1-vscode-connect-to-certain-host-quick-search}
 \end{figure}
 
-在弹出的窗口等待连接，并输入密码。余下的步骤又和上一小节一样了：打开文件夹、安装Python扩展、指定解释器。此处不再赘述。
+在弹出的窗口等待连接，并输入密码。余下的步骤又和上一小节\S\ref{sec:vscode-and-docker-container}一样了：打开文件夹、安装Python扩展、指定解释器。此处不再赘述。
+
+\subsection{使用华为云计算资源}
+
+\subsubsection{手动配置}
+
+同使用深研院计算资源\S\ref{subsec:task1-vscode-using-sigs-resources}一样，我们也通过编辑C:\textbackslash Users\textbackslash <username>\textbackslash .ssh中的config文件，来配置ssh链接。在配置前，首先进入华为云的开发环境实例中查看实例的ssh地址，如图\ref{fig:task1-huawei-modelarts-ssh-address}所示，该实例对应的用户名、地址和端口分别为\graylstinline{ma-user}、\graylstinline{dev-modelarts-cnnorth4.huaweicloud.com}、\graylstinline{30194}。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/task1-huawei-modelarts-ssh-address.png}
+	\caption{caption:task1-huawei-modelarts-ssh-address}
+	\label{fig:task1-huawei-modelarts-ssh-address}
+\end{figure}
+
+
+打开config文件，在原来的基础上加入如图\ref{fig:task1-huawei-modelarts-ssh-config-demo}所示内容。注意根据你的实例和秘钥对修改其中HostName、Port、User、IdentityFile字段。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.8\textwidth]{figures/task1-huawei-modelarts-ssh-config-demo.png}
+	\caption{caption:task1-huawei-modelarts-ssh-config-demo}
+	\label{fig:task1-huawei-modelarts-ssh-config-demo}
+\end{figure}
+
+然后又和上一节一样了，用Remote-SSH插件的Connect to Host命令接入该实例即可。
+
+\subsubsection{使用ModelArts插件自动配置}
+
+聪明的你可能已经发现不同于深研院的平台，华为ModelArts平台中，开发环境实例最右侧操作的更多选项里有一个VS Code接入选项，图\ref{fig:task1-huawei-modelarts-vscode-auto-connect}。如果我们已经安装了VS Code的Remote-SSH插件，我们直接点击“VS Code接入”就可以开始远程开发了。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.4\textwidth]{figures/task1-huawei-modelarts-vscode-auto-connect.png}
+	\caption{caption:task1-huawei-modelarts-vscode-auto-connect}
+	\label{fig:task1-huawei-modelarts-vscode-auto-connect}
+\end{figure}
+
+第一次点击的时候，可能会提示你没有安装一个ModelArts-HuaweiCloud插件，如图\ref{fig:task1-huawei-modelarts-vscode-auto-connect-extension-error}，我们点击Install and Open即可。
+
+
+
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.6\textwidth]{figures/task1-huawei-modelarts-vscode-auto-connect-extension-error.png}
+	\caption{caption:task1-huawei-modelarts-vscode-auto-connect-extension-error}
+	\label{fig:task1-huawei-modelarts-vscode-auto-connect-extension-error}
+\end{figure}
+
+这时如果你打开C:\textbackslash Users\textbackslash <username>\textbackslash .ssh\textbackslash config文件，你会发现刚刚安装的插件的作用其实就是帮你自动写入图\ref{fig:task1-huawei-modelarts-ssh-config-demo}中的内容。

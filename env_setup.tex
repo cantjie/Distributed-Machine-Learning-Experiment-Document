@@ -1,6 +1,6 @@
 \chapter{环境配置与云计算资源使用}
 
-本章将主要介绍分别使用本地计算资源、深研院计算资源和华为云计算资源时构建环境的方法。
+本章将主要介绍分别使用本地计算资源、深研院计算资源和华为云计算资源时构建环境的方法。同学们在进行实验时，原则上使用本章任意一节的知识即可完成所有实验，但推荐同学们掌握多种方法。相信大多数同学在课前已经掌握了\S\ref{sec:local-env}节中本地环境的配置方法，而\S\ref{sec:env-setup-docker}节中介绍的Docker的使用则不为大多数同学所熟知，因此推荐同学掌握Docker的使用方法，Docker在今后的科研和开发中也有望帮助同学们事半功倍。至于\S\ref{sec:env-setup-sigs-resources}节和\S\ref{sec:huawei-cloud-usage}节分别介绍了清华深研院计算资源和华为云计算资源的使用方法，两者在配置和使用上具有诸多相似性，同时相信有很多同学在使用实验室计算资源时，已掌握了类似平台的使用方法。因此如时间有限，同学们选择一个平台学习和使用即可，但为了避免行文重复，一些重复的、相似的步骤会被省略，因此即使使用华为云计算资源，也推荐同学们先阅读完\S\ref{sec:env-setup-sigs-resources}节。
 
 \section{使用本地环境与GPU}\label{sec:local-env}
 
@@ -16,16 +16,14 @@
 \end{itemize}
 
 \subsection{安装CUDA工具箱}
-\textcolor{red}{TODO 这一部分只是贴了网址,没有写成教程}
-
 
 对于包含英伟达显卡的计算机，我们推荐首先安装CUDA工具包以使用GPU加速计算。
 
-\textcolor{red}{\emph{注意，仅包含英伟达GPU的计算机需要安装CUDA工具箱以使用GPU加速计算。使用核显或AMD显卡的计算机再后续步骤中使用CPU计算即可}}
+\textcolor{red}{\emph{注意，仅包含英伟达GPU的计算机需要安装CUDA工具箱以使用GPU加速计算。使用核显或AMD显卡的计算机再后续步骤中使用CPU计算即可。}}
 
 GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划好。
 
-\url{https://developer.nvidia.com/zh-cn/cuda-gpus}
+首先查看自己的显卡的算力\url{https://developer.nvidia.com/zh-cn/cuda-gpus}：
 查看得到我的显卡的2060的算力为7.5,图\ref{fig:nvidia-rtx-2060-capability}。
 
 \begin{figure}[htbp]
@@ -35,37 +33,36 @@ GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划
     \label{fig:nvidia-rtx-2060-capability}
 \end{figure}
 
-
-\url{https://en.wikipedia.org/wiki/CUDA}
+然后根据算力查看支持该算力的CUDA版本\url{https://en.wikipedia.org/wiki/CUDA}：
 查看得到支持我显卡的CUDA版本为$\geq$10.0，图\ref{fig:corresponding-cuda-version}。
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\textwidth]{figures/corresponding-cuda-version.png}
+    \includegraphics[width=0.9\textwidth]{figures/corresponding-cuda-version.png}
     \caption{fig:corresponding-cuda-version}
     \label{fig:corresponding-cuda-version}
 \end{figure}
 
-\url{https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html}
-同时CUDA对显卡驱动的最低版本也提出了要求，但显卡驱动对CUDA向下兼容，因此一般安装了最近发布的显卡驱动版本即可，无需与CUDA版本特别对应。
+同时CUDA对显卡驱动的最低版本也提出了要求\url{https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html}，但显卡驱动对CUDA向下兼容，因此一般安装了最近发布的显卡驱动版本即可，无需与CUDA版本特别对应。
 
 
-\url{https://pytorch.org/get-started/locally/}
-最后要注意，PyTorch并不一定支持最新的CUDA版本，因此安装前再去PyTorch上看一眼PyTorch支持哪些CUDA版本，图\ref{fig:cuda-version-constrained-by-pytorch}。
+
+
+最后要注意，PyTorch并不一定支持最新的CUDA版本，因此安装前再去PyTorch上看一眼PyTorch支持哪些CUDA版本，图\ref{fig:cuda-version-constrained-by-pytorch}：\url{https://pytorch.org/get-started/locally/}
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\textwidth]{figures/cuda-version-constrained-by-pytorch.png}
+    \includegraphics[width=0.8\textwidth]{figures/cuda-version-constrained-by-pytorch.png}
     \caption{fig:cuda-version-constrained-by-pytorch}
     \label{fig:cuda-version-constrained-by-pytorch}
 \end{figure}
 
 我们发现PyTorch最高支持到CUDA 11.7，满足显卡算力对CUDA版本$\geq$10.0的要求，因此我们可以选择安装CUDA 11.7。
 
-选择对应版本CUDA安装包并下载安装, 安装过程略，图\ref{fig:select-cuda-version}。
+选择对应版本CUDA安装包并下载安装, 安装过程略，图\ref{fig:select-cuda-version}：
 \url{https://developer.nvidia.com/cuda-toolkit-archive}
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.7\textwidth]{figures/select-cuda-version.png}
+	\includegraphics[width=0.8\textwidth]{figures/select-cuda-version.png}
 	\caption{fig:select-cuda-version}
 	\label{fig:select-cuda-version}
 \end{figure}
@@ -81,7 +78,7 @@ GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.7\textwidth]{figures/nvidia-smi-install-success.png}
+	\includegraphics[width=0.8\textwidth]{figures/nvidia-smi-install-success.png}
 	\caption{caption:nvidia-smi-install-success}
 	\label{fig:nvidia-smi-install-success}
 \end{figure}
@@ -97,8 +94,8 @@ GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.7\textwidth]{figures/conda-install-success.png}
-	\caption{CAPTION holder}
-	\label{LABEL holder}
+	\caption{caption:conda-install-success}
+	\label{fig:conda-install-success}
 \end{figure}
 
 \subsection{创建虚拟环境并安装PyTorch} \label{subsec:local-env-create}
@@ -110,8 +107,8 @@ GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=0.7\textwidth]{figures/pytorch-python-version-compability.png}
-	\caption{CAPTION holder}
-	\label{LABEL holder}
+	\caption{caption:pytorch-python-version-compability}
+	\label{fig:pytorch-python-version-compability}
 \end{figure}
 
 打开终端，输入下面命令以利用conda新建环境，
@@ -124,8 +121,8 @@ GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.7\textwidth]{figures/pytorch-install-command.png}
-	\caption{CAPTION holder}
+	\includegraphics[width=1\textwidth]{figures/pytorch-install-command.png}
+	\caption{caption:pytorch-install-command}
 	\label{fig:pytorch-install-command}
 \end{figure}
 
@@ -147,7 +144,7 @@ GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划
 % 以实验一为例，VSCode安装Python插件后，
 
 
-\section{使用虚拟环境与本地GPU}
+\section{使用虚拟环境与本地GPU}\label{sec:env-setup-docker}
 
 上面的本地环境配置不可为不复杂，CUDA、显卡型号、显卡驱动、PyTorch、Python等版本需要手动一一对应起来安装。那有没有什么更简单的利用本机GPU计算资源的方法呢？
 
@@ -162,7 +159,7 @@ GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划
 为了启用hyper-v，在控制面板中按照图\ref{fig:turn-on-hyper-v}中的操作选中Hyper-V并确定。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.7\textwidth]{figures/turn-on-hyper-v.png}
+	\includegraphics[width=1\textwidth]{figures/turn-on-hyper-v.png}
 	\caption{caption:turn-on-hyper-v}
 	\label{fig:turn-on-hyper-v}
 \end{figure}
@@ -171,7 +168,7 @@ GPU型号、CUDA工具包、PyTorch版本相互关联。因此需要一起规划
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.7\textwidth]{figures/docker-mirrors-setting.png}
+	\includegraphics[width=0.9\textwidth]{figures/docker-mirrors-setting.png}
 	\caption{caption:docker-mirrors-setting}
 	\label{fig:docker-mirrors-setting}
 \end{figure}
@@ -221,7 +218,7 @@ Dockerhub是一个共享镜像的平台\url{https://hub.docker.com/}。所谓镜
 这个镜像比较大，下载需要一点时间。完成后，我们再输入\graylstinline{docker image list}就可以看到这个镜像了，见图\ref{fig:docker-image-list-pytorch}。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.7\textwidth]{figures/docker-image-list-pytorch.png}
+	\includegraphics[width=0.9\textwidth]{figures/docker-image-list-pytorch.png}
 	\caption{caption:docker-image-list-pytorch}
 	\label{fig:docker-image-list-pytorch}
 \end{figure}
@@ -242,7 +239,7 @@ Dockerhub是一个共享镜像的平台\url{https://hub.docker.com/}。所谓镜
 进入容器后，我们输入\graylstinline{nvidia-smi}等命令，查看运行结果，如图\ref{fig:docker-pytorch-container-env-check}所示，发现正是我们所需要的环境。
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.7\textwidth]{figures/docker-pytorch-container-env-check.png}
+	\includegraphics[width=1\textwidth]{figures/docker-pytorch-container-env-check.png}
 	\caption{caption:docker-pytorch-container-env-check}
 	\label{fig:docker-pytorch-container-env-check}
 \end{figure}
@@ -283,11 +280,9 @@ swapfile=E:\\wsl-swap.vhdx
 
 
 
-\section{使用华为云计算资源}\label{sec:huawei-cloud-usage}
-\textcolor{red}{TODO 申请完计算资源之后完成这部分教程}
 
 
-\section{使用深研院计算资源}
+\section{使用深研院计算资源}\label{sec:env-setup-sigs-resources}
 
 \textcolor{red}{\emph{注意，在该平台启动的开发环境需要首先手动调整一下DNS服务器，即在\graylstinline{/etc/resolv.conf}最上方添加一行“\graylstinline{nameserver 114.114.114.114}”即可。}}
 
@@ -304,18 +299,18 @@ swapfile=E:\\wsl-swap.vhdx
 	\label{fig:sigs-platform-dev-env-before-create}
 \end{figure}
 
-在弹出的窗口图\ref{fig:sigs-platform-dev-env-create}中，设置环境名称、镜像、储存位置、资源规格等信息。其中，当与小组同学共享账号时，请不要直接选择默认的资源规格，请通过自定义，限制环境所需的CPU核心数量、储存空间大小和显卡数量。对于我们的实验，系统自带的镜像已基本可以满足需求，因此在镜像选择中，按图\ref{fig:sigs-platform-dev-env-image-selection}所示选择superadmin/pytorch:1.12.0-cuda11.3-cudnn8-runtime-2即可（注意末尾的-2，带-2的版本为本学期初根据课程需求定制的版本，不带-2的版本使用ssh连接进入后会找不到合适环境。）。
-
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.7\textwidth]{figures/sigs-platform-dev-env-create.png}
+	\includegraphics[width=0.6\textwidth]{figures/sigs-platform-dev-env-create.png}
 	\caption{caption:sigs-platform-dev-env-create}
 	\label{fig:sigs-platform-dev-env-create}
 \end{figure}
+在弹出的窗口图\ref{fig:sigs-platform-dev-env-create}中，设置环境名称、镜像、储存位置、资源规格等信息。其中，当与小组同学共享账号时，请不要直接选择默认的资源规格，请通过自定义，限制环境所需的CPU核心数量、储存空间大小和显卡数量。对于我们的实验，系统自带的镜像已基本可以满足需求，因此在镜像选择中，按图\ref{fig:sigs-platform-dev-env-image-selection}所示选择superadmin/pytorch:1.12.0-cuda11.3-cudnn8-runtime-2即可（注意末尾的-2，带-2的版本为本学期初根据课程需求定制的版本，不带-2的版本使用ssh连接进入后会找不到合适环境。）。
+
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.7\textwidth]{figures/sigs-platform-dev-env-image-selection.png}
+	\includegraphics[width=0.8\textwidth]{figures/sigs-platform-dev-env-image-selection.png}
 	\caption{caption:sigs-platform-dev-env-image-selection}
 	\label{fig:sigs-platform-dev-env-image-selection}
 \end{figure}
@@ -330,10 +325,12 @@ swapfile=E:\\wsl-swap.vhdx
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.7\textwidth]{figures/sigs-platform-env-install-packages-via-web.png}
+	\includegraphics[width=0.9\textwidth]{figures/sigs-platform-env-install-packages-via-web.png}
 	\caption{caption:sigs-platform-env-install-packages-via-web}
 	\label{fig:sigs-platform-env-install-packages-via-web}
 \end{figure}
+
+
 
 
 \subsection{创建镜像环境}
@@ -349,7 +346,7 @@ swapfile=E:\\wsl-swap.vhdx
 
 \begin{figure}[htbp]
 	\centering
-	\includegraphics[width=0.3\textwidth]{figures/sigs-platform-upload-file.png}
+	\includegraphics[width=0.25\textwidth]{figures/sigs-platform-upload-file.png}
 	\caption{caption:sigs-platform-upload-file}
 	\label{fig:sigs-platform-upload-file}
 \end{figure}
@@ -361,3 +358,86 @@ swapfile=E:\\wsl-swap.vhdx
 	\caption{caption:sigs-platform-create-custom-image}
 	\label{fig:sigs-platform-create-custom-image}
 \end{figure}
+
+
+
+\section{使用华为云计算资源}\label{sec:huawei-cloud-usage}
+
+
+\subsection{代金券申请}
+
+为了使用华为云计算资源，请同学们首先注册华为云账号，并点击该链接：
+\url{https://console.huaweicloud.com/iam/?region=cn-north-4&locale=zh-cn#/mine/apiCredential}查看自己的账号名和账号ID(图\ref{fig:huawei-cloud-application})，将这两项内容与自己的姓名发给助教，助教会为同学们发放面额500元的代金券。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.9\textwidth]{figures/huawei-cloud-application.png}
+	\caption{caption:huawei-cloud-application}
+	\label{fig:huawei-cloud-application}
+\end{figure}
+
+\subsection{创建开发环境}
+
+我们将使用华为ModelArts平台，ModelArts是华为云提供的AI开发平台，同学们可在实名登陆后通过\url{https://www.huaweicloud.com/product/modelarts.html}， 点击管理控制台进入ModelArts管理控制台，图\ref{fig:huawei-cloud-modelart-homepage}。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/huawei-cloud-modelart-homepage.png}
+	\caption{caption:huawei-cloud-modelart-homepage}
+	\label{fig:huawei-cloud-modelart-homepage}
+\end{figure}
+
+进入管理控制台后，首先把区域切换到“北京四”，防止出现找不到资源的情况，图\ref{fig:huawei-modelarts-beijing4}。
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/huawei-modelarts-beijing4.png}
+	\caption{caption:huawei-modelarts-beijing4}
+	\label{fig:huawei-modelarts-beijing4}
+\end{figure}
+
+从左边导航栏中进入在线开发环境，即选择开发环境-Notebook。然后点击创建按钮以创建开发环境，图\ref{fig:huawei-modelarts-notebook}。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/huawei-modelarts-notebook.png}
+	\caption{caption:huawei-modelarts-notebook}
+	\label{fig:huawei-modelarts-notebook}
+\end{figure}
+
+
+与深研院计算平台相似，选择合适的镜像、资源规格、储存空间等，如图\ref{fig:huawei-modelarts-environment-create}所示。如需进行远程开发，请打开SSH远程开发按钮，并设置密钥对。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/huawei-modelarts-environment-create.png}
+	\caption{caption:huawei-modelarts-environment-create}
+	\label{fig:huawei-modelarts-environment-create}
+\end{figure}
+
+如没有密钥对，需创建密钥对，点击图\ref{fig:huawei-modelarts-environment-create}中的立即创建，按照图\ref{fig:huawei-modelarts-keypair-create}所示步骤创建密钥对，并将私钥文件保存到本地。私钥文件，建议保存到 C:\textbackslash Users\textbackslash <username>\textbackslash .ssh文件夹下。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/huawei-modelarts-keypair-create.png}
+	\caption{caption:huawei-modelarts-keypair-create}
+	\label{fig:huawei-modelarts-keypair-create}
+\end{figure}
+
+如此，我们便成功创建了一个开发环境，与使用深研院的计算环境相似，我们也可以用相似的方式安装其他包，此处不再赘述。
+
+\subsection{添加数据存储}
+
+当有多个开发环境实例都需要使用同一个数据集时，相比每次新建实例都从本地上传，还可以选择为每一个实例都挂载同一个数据存储空间。
+
+点击刚才创建的实例，按照图\ref{fig:huawei-modelarts-filesystem-mount}所示，点击添加数据存储，在弹出的窗口中编辑本地挂载目录，即新建的储存空间会挂在到该实例的什么地方。再选择并行文件系统，如此处为空，则点击新建并行文件系统，在新弹出的界面输入文件系统名称后点击立即创建即可。
+
+在Notebook中挂载OBS，不适用于对挂载文件做频繁随机修改，适用于对不同挂载大小文件对象的一次保存（上传），多次读取（下载）。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/huawei-modelarts-filesystem-mount.png}
+	\caption{caption:huawei-modelarts-filesystem-mount}
+	\label{fig:huawei-modelarts-filesystem-mount}
+\end{figure}
+
+\vspace{3em}
+更多问题可以参考：\url{https://support.huaweicloud.com/modelarts/index.html}
