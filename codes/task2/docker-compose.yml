@@ -1,0 +1,47 @@
+# do not put this file into dir with chinese name, unless you specify "container_name" for each container
+version: "3.9"
+services:
+  node01:           
+    # container_name: node01
+    image: cantjie/pytorch:1.13.1
+    volumes:
+      - .:/workspace      # <host(local) dir (should start with . or /)>:<dir in container>
+    command:              # python /workspace/model.py --n_devices=1 --rank=0 --gpu=0
+      - python
+      - -u
+      - /workspace/model.py 
+      - --n_devices=2
+      - --rank=0
+      - --gpu=0
+      - --master_addr=localhost
+      - --master_port=12355
+    deploy:              # make GPU accessible in container
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  node02:           
+    image: cantjie/pytorch:1.13.1
+    volumes:
+      - .:/workspace  
+    command: 
+      - python
+      - -u
+      - /workspace/model.py 
+      - --n_devices=2
+      - --rank=1
+      - --gpu=0
+      - --master_addr=node01  # docker compose automatically adds the hosts: 'node01' -> node01's ip 
+      - --master_port=12355
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+      
+  
