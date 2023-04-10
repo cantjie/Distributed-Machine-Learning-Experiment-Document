@@ -284,9 +284,9 @@ swapfile=E:\\wsl-swap.vhdx
 
 \section{使用深研院计算资源}\label{sec:env-setup-sigs-resources}
 
-\textcolor{red}{\emph{注意，在该平台启动的开发环境需要首先手动调整一下DNS服务器，即在\graylstinline{/etc/resolv.conf}最上方添加一行“\graylstinline{nameserver 114.114.114.114}”即可。}}
+% \textcolor{red}{\emph{注意，在该平台启动的开发环境需要首先手动调整一下DNS服务器，即在\graylstinline{/etc/resolv.conf}最上方添加一行“\graylstinline{nameserver 114.114.114.114}”即可。}}
 
-助教会为同学们下发用户名和密码。使用自己的账户信息登录网址：\url{http://10.103.9.27:30000/}(或使用助教的域名\url{http://sigs-gpu.cantjie.com:30000})
+助教会为同学们下发用户名和密码。使用自己的账户信息登录网址：\url{http://10.103.9.27:30000/}(或使用助教的域名\url{http://sigs-gpu.cantjie.com:30000})。注意，账号可能是共享的，请同学们格外留意\emph{在创建开发环境时不要占用账号下的全部资源。}
 
 \subsection{创建开发环境}
 
@@ -305,7 +305,7 @@ swapfile=E:\\wsl-swap.vhdx
 	\caption{caption:sigs-platform-dev-env-create}
 	\label{fig:sigs-platform-dev-env-create}
 \end{figure}
-在弹出的窗口图\ref{fig:sigs-platform-dev-env-create}中，设置环境名称、镜像、储存位置、资源规格等信息。其中，当与小组同学共享账号时，请不要直接选择默认的资源规格，请通过自定义，限制环境所需的CPU核心数量、储存空间大小和显卡数量。对于我们的实验，系统自带的镜像已基本可以满足需求，因此在镜像选择中，按图\ref{fig:sigs-platform-dev-env-image-selection}所示选择superadmin/pytorch:1.12.0-cuda11.3-cudnn8-runtime-2即可（注意末尾的-2，带-2的版本为本学期初根据课程需求定制的版本，不带-2的版本使用ssh连接进入后会找不到合适环境。）。
+在弹出的窗口图\ref{fig:sigs-platform-dev-env-create}中，设置环境名称、镜像、储存位置、资源规格等信息。其中，当与小组同学共享账号时，请不要直接选择默认的资源规格，请通过自定义，限制环境所需的CPU核心数量、储存空间大小和显卡数量（譬如六人共享账号时，推荐每个人都将资源设置为最大可用资源的六分之一）。对于我们的实验，系统自带的镜像已基本可以满足需求，因此在镜像选择中，按图\ref{fig:sigs-platform-dev-env-image-selection}所示选择superadmin/pytorch:1.12.0-cuda11.3-cudnn8-runtime-2即可（注意末尾的-2，带-2的版本为本学期初根据课程需求定制的版本，不带-2的版本使用ssh连接进入后会找不到合适环境。）。
 
 
 \begin{figure}[htbp]
