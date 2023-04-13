@@ -261,3 +261,54 @@ Adam：
 \end{figure}
 
 这时如果你打开C:\textbackslash Users\textbackslash <username>\textbackslash .ssh\textbackslash config文件，你会发现刚刚安装的插件的作用其实就是帮你自动写入图\ref{fig:task1-huawei-modelarts-ssh-config-demo}中的内容。
+
+
+\subsection{使用密钥对登录远程服务器(可选)}
+
+在使用深研院计算资源和docker容器的时候，你可能已经发现，每次登录都要输入密码，有点麻烦。我们现在可以使用密钥对来实现免密登录远程服务器或容器。
+
+具体而言，在本地（以助教的windows为例），打开终端，使用\graylstinline{ssh-keygen}命令，生成一对秘钥对：
+\begin{lstlisting}
+    ssh-keygen -t ed25519
+\end{lstlisting}
+然后在提示下按下三次回车，当然你也可以选择自定义这些内容，不过一般使用默认的设置和空的passphrase就可以了。
+
+
+我们按照第一次按回车时提示的目录，找到这对密钥对，对于windows，一般是在：
+C:\textbackslash Users \textbackslash <username>\textbackslash .ssh目录下的\graylstinline{id_ed25519}私钥文件和\graylstinline{id_ed25519.pub}的公钥文件。
+
+接下来我们需要将公钥文件发送给服务器或容器。如果你的终端可以运行\graylstinline{ssh-copy-id}命令，那么你只需要在终端运行下面的命令即可将公钥发送。
+\begin{lstlisting}
+    ssh-copy-id user@serverip
+\end{lstlisting}
+
+然而，如果你的终端找不到\graylstinline{ssh-copy-id}命令，那么发送过程会稍微麻烦一些：手动将公钥内容写入服务器的\graylstinline{\~/.ssh/authorized_keys}文件中：
+\begin{lstlisting}
+    # first ssh into the server or container
+    # copy the content of your <id_ed25519.pub> into <authorized_keys>
+    vi \~/.ssh/authorized_keys
+    
+    # give the <authorized_keys> propoer permissions
+    chmod 600 ~/.ssh/authorized_keys    
+\end{lstlisting}
+这样就完成公钥的发送了。之后你从终端ssh到服务器，就不再需要密码了。
+
+
+\subsubsection{可能的问题：权限错误}
+
+如果你在ssh时遇到了权限错误的提示，那很可能是你的本地的私钥的权限出问题了。找你的私钥文件，右键查看属性，在<安全>标签页点击编辑。如果你发现<组或用户名>栏目中有多个项目，如图\ref{fig:task1-ssh-private-key-permission-in-windows}所示（其中马赛克挡住的应该是你目前登录的用户），那么你需要将除了你自己之外的其他用户都删掉，变成图\ref{fig:task1-ssh-private-key-right-permission-in-windows}所示的那样。
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/task1-ssh-private-key-permission-in-windows.png}
+	\caption{caption:task1-ssh-private-key-permission-in-windows}
+	\label{fig:task1-ssh-private-key-permission-in-windows}
+\end{figure}
+
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{figures/task1-ssh-private-key-right-permission-in-windows.png}
+	\caption{caption:task1-ssh-private-key-right-permission-in-windows}
+	\label{fig:task1-ssh-private-key-right-permission-in-windows}
+\end{figure}
