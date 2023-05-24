@@ -6,14 +6,17 @@
 
 \subsubsection{实验内容}
 \begin{itemize}
-    \item 了解并掌握分布式算法中的集体通信和参数聚合策略，了解并掌握集体通信中常用的消息传递接口(Reduce, AllReduce, Gather, AllGather, Scatter, etc.)
-    \item 实现模型参数或模型参数梯度的聚合，尝试使用不同聚合方式(Sum, Mean, etc.)对模型的参数和梯度进行聚合，并分析不同聚合策略对模型性能的影响。    
+    % \item 了解并掌握分布式算法中的集体通信和参数聚合策略，了解并掌握集体通信中常用的消息传递接口(Reduce, AllReduce, Gather, AllGather, Scatter, etc.)
+    % \item 实现模型参数或模型参数梯度的聚合，尝试使用不同聚合方式(Sum, Mean, etc.)对模型的参数和梯度进行聚合，并分析不同聚合策略对模型性能的影响。    
+    \item 了解集体通信中的常用消息传递接口(Reduce，AllReduce，Gather，AllGather，Scatter 等)；
+    \item 基于集体通信进行模型参数（梯度）聚合更新，尝试使用不同聚合方式(Sum, Mean, etc.)对模型的参数和梯度进行聚合；
+    \item 分析不同聚合策略对模型性能的影响。
 \end{itemize}
 
 \subsubsection{实验要求}
 \begin{itemize}
-    \item 实现集体通信下的参数/梯度聚合，基于至少2种集体通信原语实现梯度平均的聚合方法，并比较它们的通信时间开销
-    \item 在框架下设置瓶颈节点，并讨论瓶颈节点对集体通信的影响
+    \item 实现集体通信下的参数（梯度）聚合，基于至少2种集体通信原语实现梯度平均的聚合方法，并比较它们的通信时间开销，分析不同聚合策略对模型性能的影响
+    \item 在框架下设置瓶颈节点，讨论瓶颈节点对集体通信的影响。
 \end{itemize}
 
 \subsection{多节点通信}
