@@ -100,7 +100,7 @@ def test(model: nn.Module, test_loader):
 
 def main():
     args = parse_args()
-    dist_utils.dist_init()
+    dist_utils.dist_init(args.n_devices, args.rank, args.master_addr, args.master_port)
     DATA_PATH = "./data"
     if args.rank == 0:
         
@@ -140,6 +140,8 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--n_devices", default=1, type=int, help="The distributd world size.")
     parser.add_argument("--rank", default=0, type=int, help="The local rank of device.")
+    parser.add_argument('--master_addr', default='localhost', type=str,help='ip of rank 0')
+    parser.add_argument('--master_port', default='12355', type=str,help='ip of rank 0')
     args = parser.parse_args()
     return args
 
