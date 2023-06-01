@@ -9,7 +9,7 @@ def dist_init(world_size, rank, master_addr='localhost', master_port='12355'):
     os.environ['MASTER_PORT'] = master_port
     
     # initialize the process group
-    dist.init_process_group(backend="nccl", rank=rank, world_size=world_size)
+    dist.init_process_group(backend="gloo", rank=rank, world_size=world_size)
     assert dist.is_initialized(), "Error! The distributed env is not initialized!"
 
     return True

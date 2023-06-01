@@ -22,7 +22,6 @@ class SubNetConv(nn.Module):
         self.conv2 = nn.Conv2d(in_channels=6, out_channels=16, kernel_size=5, stride=1, padding=0)
 
     def forward(self, x_rref):
-        x = x_rref.to_here()
         """
         Write your code here!
         """
@@ -39,7 +38,6 @@ class SubNetFC(nn.Module):
         self.fc2 = nn.Linear(120, num_classes)
 
     def forward(self, x_rref):
-        x = x_rref.to_here()
         """
         Write your code here!
         """
