@@ -7,8 +7,10 @@ import argparse
 from torch.utils.data.distributed import DistributedSampler
 import torch.multiprocessing as mp
 import dist_utils
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import time
+
+print("lib imported")
 
 class Net(nn.Module):
     def __init__(self, in_channels=1, num_classes=10):
@@ -106,14 +108,18 @@ if __name__ == "__main__":
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
     DATA_PATH = "./data"
 
+    print("HEYY")
+    print(args.n_devices, args.rank, args.master_addr, args.master_port)
+
     # initialize process group
     dist_utils.dist_init(args.n_devices, args.rank, args.master_addr, args.master_port)
     
     # construct the model
+    print("HMM0")
     model = Net(in_channels=1, num_classes=10)
     model.cuda()
 
-
+    print("HMM1")
     # construct the dataset
     transform = torchvision.transforms.Compose(
         [torchvision.transforms.ToTensor()]
@@ -122,6 +128,8 @@ if __name__ == "__main__":
     test_set = torchvision.datasets.MNIST(DATA_PATH, train=False, download=True, transform=transform)
 
     sampler = DistributedSampler(dataset=train_set, num_replicas=args.n_devices, rank=args.rank)
+
+    print("HMM2")
 
     train_loader = torch.utils.data.DataLoader(train_set, batch_size=32, shuffle=False, sampler=sampler)
     test_loader = torch.utils.data.DataLoader(test_set, batch_size=32, shuffle=False)
@@ -132,3 +140,5 @@ if __name__ == "__main__":
 
     train(model, train_loader, loss_fn, optimizer)
     test(model, test_loader)
+
+    dist_utils.cleanup()

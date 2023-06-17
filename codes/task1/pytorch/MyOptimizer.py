@@ -47,9 +47,33 @@ class GdOptimizer(BaseOptimizer):
     def step(self):
         for p in self.params:
             if p.grad is None:
-                # your code here
-                pass
+                # your code here fixed
+                p.grad = torch.zeros_like(p)
+            p.data -= self.lr * p.grad
 
 
 class AdamOptimizer(BaseOptimizer):
-    pass
+    # your code here fixed
+    def __init__(self, params, lr=0.001,  b1=0.9, b2=0.999, eps=1e-8):
+        super().__init__(params, lr)
+        self.b1 = b1
+        self.b2 = b2
+        self.eps = eps
+        self.momentums = [torch.zeros_like(p) for p in self.params]
+        self.velocities = [torch.zeros_like(p) for p in self.params]
+        self.t = 0
+        
+    def step(self):
+        self.t += 1
+        for i, p in enumerate(self.params):
+            if p.grad is None:
+                continue
+
+            self.momentums[i] = self.b1 * self.momentums[i] + (1 - self.b1) * p.grad
+
+            self.velocities[i] = self.b2 * self.velocities[i] + (1 - self.b2) * p.grad ** 2
+
+            m_hat = self.momentums[i] / (1 - self.b1 ** self.t)
+            v_hat = self.velocities[i]  / (1- self.b2 ** self.t)
+
+            p.data -= self.lr * m_hat / (torch.sqrt(v_hat) + self.eps)

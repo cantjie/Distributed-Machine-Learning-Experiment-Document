@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F 
 import torchvision
 from MyOptimizer import GdOptimizer, AdamOptimizer
+import numpy as np
 
 class Net(nn.Module):
     def __init__(self, in_channels=1, num_classes=10):
@@ -34,6 +35,11 @@ def train(model, dataloader, optimizer, loss_fn, num_epochs=1):
     print("Start training ...")
     loss_total = 0.
     model.train()
+
+    # code changed
+    loss_records = []
+    iteration_records = []
+
     for epoch in range(num_epochs):
         for i, batch_data in enumerate(dataloader):
             # with dist_autograd.context() as context_id:
@@ -50,9 +56,15 @@ def train(model, dataloader, optimizer, loss_fn, num_epochs=1):
             
             loss_total += loss.item()
             if i % 20 == 19:    
-                print('epoch: %d, iters: %5d, loss: %.3f' % (epoch + 1, i + 1, loss_total / 20))
+                # print('epoch: %d, iters: %5d, loss: %.3f' % (epoch + 1, i + 1, loss_total / 20))
+                loss_records.append(loss_total / 20)
+                iteration_records.append(i + 1)
                 loss_total = 0.0
     
+    # code changed
+    np.save('./gd_loss_records', np.asanyarray(loss_records))
+    np.save('./gd_itr_records', np.asanyarray(iteration_records))
+
     print("Training Finished!")
 
 def test(model: nn.Module, test_loader):
@@ -88,8 +100,8 @@ def main():
     test_loader = torch.utils.data.DataLoader(test_set, batch_size=32, shuffle=False)
 
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = GdOptimizer(model.parameters(), lr=0.01)
-    # optimizer = AdamOptimizer(model.parameters(), lr=0.01, b1=0.9, b2=0.999)
+    # optimizer = GdOptimizer(model.parameters(), lr=0.01)
+    optimizer = AdamOptimizer(model.parameters(), lr=0.01, b1=0.2, b2=0.3)
 
     train(model, train_loader, optimizer, loss_fn)
     test(model, test_loader)

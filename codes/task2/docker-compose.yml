@@ -1,9 +1,10 @@
+# i dont use docker-compose. I get bugs in building docker image. I manually input the command in docker terminal
 # do not put this file into dir with chinese name, unless you specify "container_name" for each container
 version: "3.9"
 services:
   node01:           
     # container_name: node01
-    image: cantjie/pytorch:1.13.1
+    image: jess/dml1:latest
     volumes:
       - .:/workspace      # <host(local) dir (should start with . or /)>:<dir in container>
     command:              # python /workspace/model.py --n_devices=1 --rank=0 --gpu=0
@@ -24,7 +25,7 @@ services:
               capabilities: [gpu]
 
   node02:           
-    image: cantjie/pytorch:1.13.1
+    image: jess/dml1:latest
     volumes:
       - .:/workspace  
     command: 

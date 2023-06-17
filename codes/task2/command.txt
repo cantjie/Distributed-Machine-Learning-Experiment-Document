@@ -1,0 +1,13 @@
+docker build -t jess/dml .
+
+
+eval "$(conda shell.bash hook)"
+
+
+. /opt/conda/etc/profile.d/conda.sh
+conda activate deep-learning
+
+python model.py --n_devices=2 --rank=0
+
+python model.py --n_devices=1 --rank=0 --gpu=0
+
