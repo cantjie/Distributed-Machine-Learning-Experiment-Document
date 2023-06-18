@@ -1,6 +1,8 @@
 import math
 import torch
 from torch.utils.data import Dataset, Sampler
+import random
+import torch.distributed as dist
 
 class MySampler(Sampler):
     def __init__(self, dataset:Dataset, num_replicas, rank, shuffle=True, seed=0):
@@ -19,7 +21,18 @@ class MySampler(Sampler):
                 indices=list(range(len(self.dataset)))
                 return iter(indices)
         """
-        raise NotImplementedError
+        indices = list(range(len(self.dataset)))
+
+        if self.shuffle:
+            # Set the random seed based on rank and epoch to ensure different indices across different processes
+            seed = self.seed + self.epoch
+            torch.manual_seed(seed)
+            torch.cuda.manual_seed(seed)
+            indices = torch.randperm(len(indices)).tolist()
+
+        indices = indices[self.rank:len(indices):self.num_replicas]  # Select samples for the current rank
+
+        return iter(indices)
 
     def __len__(self):
         return self.num_samples

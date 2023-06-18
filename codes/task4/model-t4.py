@@ -8,14 +8,14 @@ import torchvision
 
 import argparse
 import torch.distributed as dist
-from torch.distributed.optim.optimizer import DistributedOptimizer
+from torch.distributed.optim import DistributedOptimizer
 import torch.distributed.autograd as dist_autograd
 import torch.multiprocessing as mp
-from torch.distributed.rpc.api import rpc_sync
+import torch.distributed.rpc as rpc
+from torch.distributed.rpc import rpc_sync
 import dist_utils
-
-# DistributedOptimizer = torch.distributed.optim.DistributedOptimizer
-# rpc_sync = torch.distributed.rpc.rpc_sync
+import time
+import pickle
 
 class SubNetConv(nn.Module):
     def __init__(self, in_channels):
@@ -27,6 +27,9 @@ class SubNetConv(nn.Module):
         """
         Write your code here!
         """
+        out = F.max_pool2d(F.relu(self.conv1(x_rref)), (2, 2))
+        out = F.max_pool2d(F.relu(self.conv2(out)), (2, 2))
+        return out
         pass
 
     def parameter_rrefs(self):
@@ -43,6 +46,10 @@ class SubNetFC(nn.Module):
         """
         Write your code here!
         """
+        out = x_rref.flatten(1)
+        out = F.relu(self.fc1(out))
+        out = self.fc2(out)
+        return out
         pass
 
     def parameter_rrefs(self):
@@ -56,18 +63,24 @@ class ParallelNet(nn.Module):
         """
         Write your code here!
         """
+        self.conv_net = rpc.remote("worker1", SubNetConv, args=(in_channels,))
+        self.fc_net = rpc.remote("worker2", SubNetFC, args=(num_classes,))
         pass
 
     def forward(self, x):
         """
         Write your code here!
         """
+        out = self.conv_net.rpc_sync().forward(x)
+        out = self.fc_net.rpc_sync().forward(out)
+        return out
         pass
 
     def parameter_rrefs(self):
         """
         Write your code here!
         """
+        return self.conv_net.rpc_sync().parameter_rrefs() + self.fc_net.rpc_sync().parameter_rrefs()
         pass
 
 def train(model, dataloader, loss_fn, optimizer, num_epochs=2):
@@ -75,14 +88,28 @@ def train(model, dataloader, loss_fn, optimizer, num_epochs=2):
     loss_total = 0.
     model.train()
     dist_utils.init_parameters(model)
+    loss_path = []
     for epoch in range(num_epochs):
         for i, batch_data in enumerate(dataloader):
             """
             Write your code here!
             """
+            inputs, labels = batch_data
+            with dist_autograd.context() as context_id:
+                model.zero_grad()
+                outputs = model(inputs)
+                loss = loss_fn(outputs, labels)
+                dist_autograd.backward(context_id,[loss])
+                optimizer.step(context_id)
+            loss_total += loss.item()
+            loss_path.append(loss.item())
+            if i % 20 == 19:  
+                print('Device: %d epoch: %d, iters: %5d, loss: %.3f' % (dist_utils.get_local_rank(), epoch + 1, i + 1, loss_total / 20))
+                loss_total = 0.0
             pass
     
     print("Training Finished!")
+    return loss_path
 
 
 def test(model: nn.Module, test_loader):
@@ -123,8 +150,13 @@ def main():
         loss_fn = nn.CrossEntropyLoss()
         # optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
         dist_optimizer = DistributedOptimizer(torch.optim.SGD, model.parameter_rrefs(), lr=0.01)
-
-        train(model, train_loader, loss_fn, dist_optimizer)
+    
+        start_time = time.time()
+        loss = train(model, train_loader, loss_fn, dist_optimizer)
+        end_time = time.time()
+        with open('loss.pkl', 'wb') as file:
+            pickle.dump(loss, file)
+        print("时间花费{:.2f}".format(end_time-start_time))
         test(model, test_loader)
     
     elif args.rank == 1:

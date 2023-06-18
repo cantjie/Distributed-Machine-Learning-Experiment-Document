@@ -60,8 +60,8 @@ def train(model, dataloader, loss_fn, optimizer, num_epochs=2):
             loss.backward()
 
             # average the gradients of model parameters
-            # dist_utils.allreduce_average_gradients(model)
-            dist_utils.allgather_average_gradients(model)
+            dist_utils.allreduce_average_gradients(model)
+            # dist_utils.allgather_average_gradients(model)
 
             optimizer.step()
             loss_total += loss.item()
