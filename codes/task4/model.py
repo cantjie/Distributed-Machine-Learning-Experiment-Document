@@ -27,7 +27,10 @@ class SubNetConv(nn.Module):
         """
         Write your code here!
         """
-        pass
+        x = x_rref.to_here()  # Move the input to the local device
+        x = self.conv1(x)
+        x = self.conv2(x)
+        return x
 
     def parameter_rrefs(self):
         return [rpc.RRef(p) for p in self.parameters()]
@@ -43,7 +46,12 @@ class SubNetFC(nn.Module):
         """
         Write your code here!
         """
-        pass
+        x = x_rref.to_here()  # Move the input to the local device
+        x = x.view(x.size(0), -1)  # Flatten the input
+        x = self.fc1(x)
+        x = nn.functional.relu(x)
+        x = self.fc2(x)
+        return x
 
     def parameter_rrefs(self):
         return [rpc.RRef(p) for p in self.parameters()]
@@ -56,19 +64,26 @@ class ParallelNet(nn.Module):
         """
         Write your code here!
         """
-        pass
+        # Declare SubNetConv and SubNetFC as remote modules
+        self.subnet_conv = rpc.remote("worker1", SubNetConv, args=(in_channels,))
+        self.subnet_fc = rpc.remote("worker2", SubNetFC, args=(num_classes,))
+
 
     def forward(self, x):
         """
         Write your code here!
         """
-        pass
+        x = self.subnet_conv.forward(x)
+        x = self.subnet_fc.forward(x)
+        return x
 
     def parameter_rrefs(self):
         """
         Write your code here!
         """
-        pass
+        conv_params = self.subnet_conv.rpc_sync().parameter_rrefs()
+        fc_params = self.subnet_fc.rpc_sync().parameter_rrefs()
+        return conv_params + fc_params
 
 def train(model, dataloader, loss_fn, optimizer, num_epochs=2):
     print("Device {} starts training ...".format(dist_utils.get_local_rank()))
@@ -80,8 +95,16 @@ def train(model, dataloader, loss_fn, optimizer, num_epochs=2):
             """
             Write your code here!
             """
-            pass
-    
+            inputs, targets = batch_data
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = loss_fn(outputs, targets)
+            loss.backward()
+            optimizer.step()
+            loss_total += loss.item()
+            if i % 20 == 19:    
+                print('Device: %d epoch: %d, iters: %5d, loss: %.3f' % (dist_utils.get_local_rank(), epoch + 1, i + 1, loss_total / 20))
+                loss_total = 0.0
     print("Training Finished!")
 
 
