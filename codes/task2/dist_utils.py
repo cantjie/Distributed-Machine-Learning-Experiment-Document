@@ -54,11 +54,12 @@ def allreduce_average_gradients(model):
 
 def allgather_average_gradients(model):
     # your code here
-    gradients = [param.grad.data.clone() for param in model.parameters() if param.grad is not None]
+    gradients = [torch.Tensor(param.grad.data.clone()) for param in model.parameters() if param.grad is not None]
+    # gradients = torch.Tensor(gradients )
     all_gradients = [torch.zeros_like(gradient) for gradient in gradients]
     dist.all_gather(all_gradients, gradients)
 
-    num_processes = dist.get_world_size()
+    num_processes = float(dist.get_world_size())
     for gradient in all_gradients:
         gradient.div_(num_processes)
     

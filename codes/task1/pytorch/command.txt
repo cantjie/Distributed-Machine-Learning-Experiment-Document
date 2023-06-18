@@ -1,0 +1,3 @@
+python model.py --optim=gd
+
+# optim can be gd, sgd or adam

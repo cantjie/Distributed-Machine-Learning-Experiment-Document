@@ -1,0 +1,7 @@
+epoch: 1, iters: 59701, loss: 0.000
+epoch: 1, iters: 59801, loss: 0.003
+epoch: 1, iters: 59901, loss: 0.000
+Training Finished!
+testing ...
+
+Test set: Accuracy: 9822/10000 (98.22%)
